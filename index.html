@@ -2,62 +2,79 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>For You ❤️</title>
+  <title>Chat 💬</title>
 
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #ffe6eb, #fff);
-      text-align: center;
-      padding: 50px;
-      overflow: hidden;
+      background: #e5ddd5;
+      padding: 20px;
     }
 
-    .card {
-      background: white;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    .chat {
       max-width: 420px;
       margin: auto;
-      animation: fadeIn 0.8s ease;
+      background: #fff;
+      height: 90vh;
+      border-radius: 15px;
+      padding: 15px;
+      overflow-y: auto;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
+    .msg {
+      padding: 10px 14px;
+      margin: 8px 0;
+      border-radius: 12px;
+      width: fit-content;
+      max-width: 80%;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: pop 0.4s forwards;
+    }
+
+    @keyframes pop {
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .fade {
-      animation: fadeIn 0.5s ease;
+    .me {
+      background: #dcf8c6;
+      margin-left: auto;
+    }
+
+    .you {
+      background: #fff;
+      border: 1px solid #ddd;
+    }
+
+    .typing {
+      font-style: italic;
+      opacity: 0.7;
     }
 
     button {
-      padding: 12px 22px;
+      padding: 10px 15px;
       border: none;
       border-radius: 10px;
-      margin: 10px;
       cursor: pointer;
-      font-size: 16px;
-      transition: 0.3s;
+      margin: 5px;
     }
 
-    .next { background: #ff4d6d; color: white; }
-    .yes { background: #28a745; color: white; }
+    .yes { background: #25d366; color: white; }
     .no { background: #ccc; }
 
     .grow {
-      transform: scale(1.3);
+      transform: scale(1.2);
     }
 
     .heart {
       position: absolute;
-      color: #ff4d6d;
+      color: red;
       animation: float 6s linear infinite;
     }
 
     @keyframes float {
-      from { transform: translateY(100vh); opacity: 1; }
+      from { transform: translateY(100vh); }
       to { transform: translateY(-10vh); opacity: 0; }
     }
   </style>
@@ -65,101 +82,128 @@
 
 <body>
 
-<div class="card" id="content">
-  <h2>Hey Atinuke 😊</h2>
-  <p>Don’t overthink this… just go through it</p>
-  <button class="next" onclick="nextStep(1)">Next 💌</button>
-</div>
+<div class="chat" id="chat"></div>
 
 <script>
+  const chat = document.getElementById("chat");
   let noClicks = 0;
 
-  function render(html) {
-    const content = document.getElementById("content");
-    content.classList.remove("fade");
-    void content.offsetWidth; // reset animation
-    content.classList.add("fade");
-    content.innerHTML = html;
+  function addMsg(text, sender="you") {
+    const div = document.createElement("div");
+    div.classList.add("msg", sender);
+    div.innerHTML = text;
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
   }
 
-  function nextStep(step) {
+  function typing(callback, delay=1500) {
+    const t = document.createElement("div");
+    t.classList.add("msg", "you", "typing");
+    t.innerHTML = "typing...";
+    chat.appendChild(t);
+    chat.scrollTop = chat.scrollHeight;
 
-    if (step === 1) {
-      render(`
-        <h2>So...</h2>
-        <p>Being around you just feels easy.<br><br>
-        Like I don’t have to force anything… I can just be myself.</p>
-        <button class="next" onclick="nextStep(2)">Continue ❤️</button>
-      `);
-    }
-
-    else if (step === 2) {
-      render(`
-        <h2>And honestly...</h2>
-        <p>It’s not just how you look.<br><br>
-        It’s how calm I feel around you… it’s different.</p>
-        <button class="next" onclick="nextStep(3)">Keep going 😭</button>
-      `);
-    }
-
-    else if (step === 3) {
-      render(`
-        <h2>Real talk...</h2>
-        <p>I don’t want this to stay as just a talking stage.<br><br>
-        I want something real with you.</p>
-        <button class="next" onclick="nextStep(4)">Okay...</button>
-      `);
-    }
-
-    else if (step === 4) {
-      render(`
-        <h2>So here it is...</h2>
-        <p>Will you be my girlfriend? 💕</p>
-        <button class="yes" onclick="yes()">Yes 💖</button>
-        <button class="no" id="noBtn" onclick="no()">No 😭</button>
-      `);
-    }
+    setTimeout(() => {
+      t.remove();
+      callback();
+    }, delay);
   }
 
-  function yes() {
-    render(`
-      <h2>🥺❤️</h2>
-      <p>I’m really glad I did this.<br><br>
-      Come here 🫶</p>
-    `);
+  function start() {
+    setTimeout(() => {
+      addMsg("Hey Atinuke 😊", "you");
+
+      typing(() => {
+        addMsg("Don’t overthink this… just read.", "you");
+
+        setTimeout(step1, 1200);
+      }, 1500);
+    }, 500);
   }
 
-  function no() {
-    noClicks++;
-    const noBtn = document.getElementById("noBtn");
+  function step1() {
+    typing(() => {
+      addMsg("Being around you just feels easy.", "you");
+      addMsg("Like I don’t have to force anything… I can just be myself.", "you");
 
-    if (noClicks === 1) {
-      noBtn.classList.add("grow");
-      noBtn.innerText = "Are you sure? 😭";
-    } 
-    else if (noClicks === 2) {
-      noBtn.innerText = "Think again… 😔";
-    } 
-    else {
-      noBtn.style.display = "none";
-      document.getElementById("content").innerHTML += `
-        <p style="margin-top:15px;">I’ll wait for you 😌</p>
-      `;
-    }
+      setTimeout(step2, 1500);
+    }, 1800);
   }
 
-  function createHeart() {
-    const heart = document.createElement("div");
-    heart.classList.add("heart");
-    heart.innerText = "❤️";
-    heart.style.left = Math.random() * 100 + "vw";
-    heart.style.fontSize = (Math.random() * 20 + 10) + "px";
-    document.body.appendChild(heart);
+  function step2() {
+    typing(() => {
+      addMsg("And it’s not just how you look.", "you");
+      addMsg("It’s how calm I feel when I talk to you.", "you");
 
-    setTimeout(() => heart.remove(), 6000);
+      setTimeout(step3, 1800);
+    }, 1800);
   }
 
-  setInterval(createHeart, 500);
+  function step3() {
+    typing(() => {
+      addMsg("I don’t want this to stay as just a talking stage.", "you");
+
+      setTimeout(finalQuestion, 2000);
+    }, 1800);
+  }
+
+  function finalQuestion() {
+    typing(() => {
+      addMsg("So I’ll just ask you directly...", "you");
+
+      setTimeout(() => {
+        addMsg("Will you be my girlfriend? 💕", "you");
+
+        const btnWrap = document.createElement("div");
+
+        const yes = document.createElement("button");
+        yes.classList.add("yes");
+        yes.innerText = "Yes 💖";
+        yes.onclick = () => {
+          addMsg("🥺❤️ I’m really happy you said yes.", "you");
+          startHearts();
+        };
+
+        const no = document.createElement("button");
+        no.classList.add("no");
+        no.innerText = "No 😭";
+        no.onclick = () => {
+          noClicks++;
+
+          if (noClicks === 1) {
+            no.classList.add("grow");
+            no.innerText = "Are you sure? 😭";
+          } 
+          else if (noClicks === 2) {
+            no.innerText = "Don’t do that. Choose yes 😔";
+          } 
+          else {
+            no.style.display = "none";
+            addMsg("I’ll wait for you 😌", "you");
+          }
+        };
+
+        btnWrap.appendChild(yes);
+        btnWrap.appendChild(no);
+        chat.appendChild(btnWrap);
+
+      }, 1000);
+    }, 1500);
+  }
+
+  function startHearts() {
+    setInterval(() => {
+      const h = document.createElement("div");
+      h.classList.add("heart");
+      h.innerText = "❤️";
+      h.style.left = Math.random() * 100 + "vw";
+      document.body.appendChild(h);
+
+      setTimeout(() => h.remove(), 6000);
+    }, 400);
+  }
+
+  start();
 </script>
 
 </body>
