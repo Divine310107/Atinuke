@@ -28,6 +28,10 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    .fade {
+      animation: fadeIn 0.5s ease;
+    }
+
     button {
       padding: 12px 22px;
       border: none;
@@ -61,89 +65,68 @@
 
 <body>
 
-<!-- 🎵 Background Music -->
-<audio id="bgMusic" loop>
-  <source src="music.mp3" type="audio/mpeg">
-</audio>
-
 <div class="card" id="content">
   <h2>Hey Atinuke 😊</h2>
-  <p>Don't overthink this... just go through it</p>
-  <button class="next" onclick="startExperience()">Next 💌</button>
+  <p>Don’t overthink this… just go through it</p>
+  <button class="next" onclick="nextStep(1)">Next 💌</button>
 </div>
 
 <script>
   let noClicks = 0;
-  let musicStarted = false;
 
-  function startExperience() {
-    if (!musicStarted) {
-      const music = document.getElementById("bgMusic");
-      music.volume = 0; // start silent
-      music.play();
-
-      // smooth fade-in
-      let vol = 0;
-      const fade = setInterval(() => {
-        if (vol < 0.5) {
-          vol += 0.05;
-          music.volume = vol;
-        } else {
-          clearInterval(fade);
-        }
-      }, 200);
-
-      musicStarted = true;
-    }
-    nextStep(1);
+  function render(html) {
+    const content = document.getElementById("content");
+    content.classList.remove("fade");
+    void content.offsetWidth; // reset animation
+    content.classList.add("fade");
+    content.innerHTML = html;
   }
 
   function nextStep(step) {
-    const content = document.getElementById("content");
 
     if (step === 1) {
-      content.innerHTML = `
+      render(`
         <h2>So...</h2>
         <p>Being around you just feels easy.<br><br>
-        Like I don’t have to force anything, I can just be myself.</p>
+        Like I don’t have to force anything… I can just be myself.</p>
         <button class="next" onclick="nextStep(2)">Continue ❤️</button>
-      `;
+      `);
     }
 
     else if (step === 2) {
-      content.innerHTML = `
+      render(`
         <h2>And honestly...</h2>
-        <p>You’re actually stunning.<br><br>
-        Not just how you look, but everything about you.</p>
-        <button class="next" onclick="nextStep(3)">Wait... 😭</button>
-      `;
+        <p>It’s not just how you look.<br><br>
+        It’s how calm I feel around you… it’s different.</p>
+        <button class="next" onclick="nextStep(3)">Keep going 😭</button>
+      `);
     }
 
     else if (step === 3) {
-      content.innerHTML = `
-        <h2>Truth is...</h2>
-        <p>I don’t want this to just be a talking stage.<br><br>
+      render(`
+        <h2>Real talk...</h2>
+        <p>I don’t want this to stay as just a talking stage.<br><br>
         I want something real with you.</p>
-        <button class="next" onclick="nextStep(4)">Okay… last one</button>
-      `;
+        <button class="next" onclick="nextStep(4)">Okay...</button>
+      `);
     }
 
     else if (step === 4) {
-      content.innerHTML = `
-        <h2>So here's my question...</h2>
+      render(`
+        <h2>So here it is...</h2>
         <p>Will you be my girlfriend? 💕</p>
         <button class="yes" onclick="yes()">Yes 💖</button>
         <button class="no" id="noBtn" onclick="no()">No 😭</button>
-      `;
+      `);
     }
   }
 
   function yes() {
-    document.getElementById("content").innerHTML = `
+    render(`
       <h2>🥺❤️</h2>
-      <p>You just made me the happiest guy alive.<br><br>
+      <p>I’m really glad I did this.<br><br>
       Come here 🫶</p>
-    `;
+    `);
   }
 
   function no() {
@@ -155,10 +138,13 @@
       noBtn.innerText = "Are you sure? 😭";
     } 
     else if (noClicks === 2) {
-      noBtn.innerText = "Don’t do that. Choose yes 😭";
+      noBtn.innerText = "Think again… 😔";
     } 
     else {
       noBtn.style.display = "none";
+      document.getElementById("content").innerHTML += `
+        <p style="margin-top:15px;">I’ll wait for you 😌</p>
+      `;
     }
   }
 
@@ -170,9 +156,7 @@
     heart.style.fontSize = (Math.random() * 20 + 10) + "px";
     document.body.appendChild(heart);
 
-    setTimeout(() => {
-      heart.remove();
-    }, 6000);
+    setTimeout(() => heart.remove(), 6000);
   }
 
   setInterval(createHeart, 500);
